@@ -22,7 +22,7 @@ your media player.
 - `ffmpeg` (provides ffprobe)
 - `playerctl`
 
-**Optional:**
+**Optional but you should really really get it:**
 - `python-mutagen` — reads embedded audio tags for better lyrics matching
 - `python-syncedlyrics` — fallback lyrics source (NetEase, etc.)
 - `python-librosa` — onset detection for more accurate word-level timing
