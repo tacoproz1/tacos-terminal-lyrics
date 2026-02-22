@@ -36,7 +36,7 @@ paru -S lrc-tools
 
 ### Manual
 ```bash
-git clone https://github.com/yourusername/lrc-tools
+git clone https://github.com/tacoproz1/tacos-terminal-lyrics
 cd lrc-tools
 pip install pyyaml mutagen syncedlyrics --break-system-packages
 ```
