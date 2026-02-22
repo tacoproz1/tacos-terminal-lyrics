@@ -119,3 +119,4 @@ lrc-vis --lrc-dir ~/lyrics/processed --wlrc \
 ## License
 
 MIT
+# tacos-terminal-lyrics
