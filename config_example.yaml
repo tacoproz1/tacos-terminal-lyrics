@@ -1,0 +1,60 @@
+# LRC Tools Configuration File
+# Save as config.yaml and use with --config flag
+
+# Processor settings (for lrc-processor)
+processor:
+  # Maximum duration for a single phrase (seconds)
+  # Phrases longer than this will be split at natural boundaries
+  max_phrase_duration: 2.5
+  
+  # Minimum duration for a phrase (seconds)
+  # Phrases shorter than this are skipped (likely timing errors)
+  min_phrase_duration: 0.3
+  
+  # Maximum words per phrase (soft limit)
+  # Used in combination with duration to decide when to split
+  max_words_per_phrase: 8
+  
+  # Always split phrases at commas
+  # When true, any phrase with commas will be split there
+  split_on_commas: true
+  
+  # Use librosa for audio onset detection (requires librosa installed)
+  # Provides more accurate word-level timing but slower
+  use_onset_detection: false
+  
+  # Blend factor for onset detection (0.0 = even distribution, 1.0 = pure onset detection)
+  # Only used if use_onset_detection is true
+  onset_blend_factor: 0.5
+
+# Visualizer settings (for lrc-vis)
+visualizer:
+  # Default font to use ('block' or 'compact')
+  default_font: "block"
+  
+  # Display refresh rate (seconds)
+  # How often to check playback position and update display
+  refresh_rate: 0.05
+  
+  # Minimum time to display each word (seconds)
+  # Only used for word-level (WLRC) display
+  word_display_time: 0.3
+  
+  # Transition style ('fade', 'instant', 'scroll')
+  # Note: Only 'instant' is currently implemented
+  transition_style: "instant"
+  
+  # Enable terminal colors (not yet implemented)
+  colors_enabled: true
+  
+  # Clear screen between updates
+  clear_screen: true
+
+
+# Example usage:
+# 
+# lrc-processor --config config.yaml --lrc-dir ~/Lyrics --audio-dir ~/Music --output-dir ~/Processed
+# lrc-vis --config config.yaml --lrc-dir ~/Lyrics
+#
+# You can also override specific settings via command line:
+# lrc-processor --config config.yaml --max-phrase-duration 3.0 --lrc-dir ~/Lyrics ...
