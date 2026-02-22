@@ -1,6 +1,10 @@
 # lrc-tools
 
 [EVERY FILE IS VIBECODED IF THAT WASNT OBVIOUS ENOUGH,SORRY]
+ALSO THIS BUILD SUCKSSSS, in regards to the lyric accuracy (faster the spoken lyrics in song the more accurate the wlrc will be)
+also non mainstream songs occasionally dont get pulled cause they are simply not in lrclib
+there are of course tons of small other issues, which i will have fixed eventually
+
 
 Terminal lyrics visualizer with word-level sync. Displays song lyrics in large
 ASCII block letters in your terminal, synchronized to whatever is playing in
@@ -38,6 +42,7 @@ paru -S lrc-tools
 ```bash
 git clone https://github.com/tacoproz1/tacos-terminal-lyrics
 cd tacos-terminal-lyrics
+bash setup.sh
 pip install pyyaml mutagen syncedlyrics --break-system-packages
 ```
 
@@ -46,9 +51,8 @@ pip install pyyaml mutagen syncedlyrics --break-system-packages
 ```bash
 mkdir -p ~/lyrics/raw ~/lyrics/processed
 
-# 1. Download lyrics for your music library
+# 1. Download lyrics for your music library (if using bash and not fish run export PATH="$HOME/.local/bin:$PATH")
 lrc-fetch --audio-dir ~/music --output-dir ~/lyrics/raw
-
 # 2. Process into word-level timing
 lrc-processor --lrc-dir ~/lyrics/raw --audio-dir ~/music \
               --output-dir ~/lyrics/processed --wlrc
