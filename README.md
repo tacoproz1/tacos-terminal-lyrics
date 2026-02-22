@@ -29,12 +29,12 @@ your media player.
 
 ## Install
 
-### AUR
+### AUR (havent made it yet, prolly wont though)
 ```bash
 paru -S lrc-tools
 ```
 
-### Manual
+### Manual (do this)
 ```bash
 git clone https://github.com/tacoproz1/tacos-terminal-lyrics
 cd lrc-tools
