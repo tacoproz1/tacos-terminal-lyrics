@@ -1,6 +1,10 @@
 # lrc-tools
 
 [EVERY FILE IS VIBECODED IF THAT WASNT OBVIOUS ENOUGH,SORRY]
+
+/\ /\ /\ /\ /\ /\ /\ /\
+oh yea and because of this i recommend to use ai or someone else for troubleshooting cause i dont offer support for this project as of now
+
 ALSO THIS BUILD SUCKSSSS, in regards to the lyric accuracy (faster the spoken lyrics in song the more accurate the wlrc will be)
 also non mainstream songs occasionally dont get pulled cause they are simply not in lrclib
 there are of course tons of small other issues, which i will have fixed eventually
