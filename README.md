@@ -22,7 +22,7 @@ your media player.
   ██   ██ ███████ ███████ ███████  ██████
 ```
 
-## Dependencies (rather install these in a venv with pip, or get them off the aur)
+## Dependencies (install these in a venv with pip, or get them off the aur)
 
 **Required:**
 - `python >= 3.12`
