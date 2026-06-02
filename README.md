@@ -127,7 +127,7 @@ lrc-vis --lrc-dir ~/lyrics/processed --wlrc \
 ## extra
 
 for clearing metadata in locally downloaded files which may initially interfere with the process or other uses, refer to: 
-https://open.spotify.com/playlist/37i9dQZF1CL5Mj0FGsCY5k?si=940f46a60efa42df
+https://gist.github.com/ISawSau/d3ea9ffd8b346be55c7bc68831637c47
 ## License
 
 MIT
