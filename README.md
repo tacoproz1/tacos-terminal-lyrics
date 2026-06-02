@@ -122,8 +122,12 @@ Fonts are defined in JSON. See `custom_fonts.json` for the format.
 ```bash
 lrc-vis --lrc-dir ~/lyrics/processed --wlrc \
         --custom-fonts custom_fonts.json --font mini
-```
 
+```
+## extra
+
+for clearing metadata in locally downloaded files which may initially interfere with the process or other uses, refer to: 
+https://open.spotify.com/playlist/37i9dQZF1CL5Mj0FGsCY5k?si=940f46a60efa42df
 ## License
 
 MIT
