@@ -129,7 +129,7 @@ lrc-vis --lrc-dir ~/lyrics/processed --wlrc \
 for clearing metadata in locally downloaded files which may initially interfere with the process or other uses, refer to: 
 https://gist.github.com/ISawSau/d3ea9ffd8b346be55c7bc68831637c47
 
-for a more dynamic and better OS/tool supported check out:
+for more dynamic OS/tool support check out:
 https://github.com/SlurryMixx/-tacos-terminal-lyrics-SPOTIFYPORT
 ## License
 
