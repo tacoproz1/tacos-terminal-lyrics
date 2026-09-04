@@ -131,6 +131,9 @@ https://gist.github.com/ISawSau/d3ea9ffd8b346be55c7bc68831637c47
 
 for more dynamic OS/tool support check out:
 https://github.com/SlurryMixx/-tacos-terminal-lyrics-SPOTIFYPORT
+
+vibecoded rust rewrite, has higher standard wlrc/lrc repos here:
+https://github.com/mgtaco/terminal-lyrics
 ## License
 
 MIT
