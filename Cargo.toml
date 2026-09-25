@@ -1,0 +1,26 @@
+[package]
+name = "tacos-terminal-lyrics-rust"
+version = "0.1.0"
+edition = "2021"
+description = "Terminal lyrics visualizer in Rust: auto-detects the current song via MPRIS, fetches synced LRC from lrclib.net, colored by your own terminal theme. No python, no pywal/matugen."
+license = "MIT"
+repository = "https://github.com/mikuri12/tacos-terminal-lyrics-rust"
+readme = "README.md"
+keywords = ["lyrics", "mpris", "terminal", "lrc", "music"]
+categories = ["command-line-utilities", "multimedia"]
+
+[[bin]]
+name = "tacos-lyrics"
+path = "src/main.rs"
+
+[dependencies]
+mpris = "2.1"
+ureq = { version = "2", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+libc = "0.2"
+rusqlite = { version = "0.40", default-features = false }
+
+[profile.release]
+lto = true
+strip = true

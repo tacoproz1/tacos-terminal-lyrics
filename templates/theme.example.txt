@@ -1,0 +1,27 @@
+# tacos-lyrics theme file
+#
+# Any tool (or yourself) can write this file; the visualizer reloads it
+# live when it receives SIGUSR1 (kill -USR1 <pid>).
+#
+# Location used by default: ~/.config/tacos-lyrics/theme.txt
+# Or pass an explicit path:  tacos-lyrics --theme /path/to/theme.txt
+#
+# Keys:
+#   sung   -> words already sung (karaoke sweep)
+#   unsung -> words not yet sung
+#   paused -> the whole line while playback is paused
+#   header -> the "artist - title" status line
+#
+# Values:
+#   #rrggbb / #rgb  explicit color (truecolor)
+#   palette:N        terminal palette slot 0-255 (FOLLOWS your terminal
+#                    colorscheme - this is the way to react to theme
+#                    changes without any tooling)
+#   default          the terminal's default foreground
+#   dim              faint variant of the default foreground
+#
+# Example (commented out) - a purple/pink scheme:
+# sung   = #cba6f7
+# unsung = palette:8
+# paused = dim
+# header = palette:8

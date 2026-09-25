@@ -1,18 +1,8 @@
-# lrc-tools
+# tacos-terminal-lyrics (Rust)
 
-[EVERY FILE IS VIBECODED IF THAT WASNT OBVIOUS ENOUGH,SORRY]
-
-/\ /\ /\ /\ /\ /\ /\ /\
-oh yea and because of this i recommend to use ai or someone else for troubleshooting cause i dont offer support for this project as of now
-
-ALSO THIS BUILD SUCKSSSS, in regards to the lyric accuracy (faster the spoken lyrics in song the more accurate the wlrc will be)
-also non mainstream songs occasionally dont get pulled cause they are simply not in lrclib
-there are of course tons of small other issues, which i will have fixed eventually
-
-
-Terminal lyrics visualizer with word-level sync. Displays song lyrics in large
-ASCII block letters in your terminal, synchronized to whatever is playing in
-your media player.
+Letras sincronizadas en tu terminal, en letras grandes estilo bloque —
+detecta la canción sola, busca la letra sola, y usa los colores de tu
+propia terminal. Sin Python, sin pywal/matugen, sin pasos previos.
 
 ```
   ██   ██ ███████ ██      ██       ██████
@@ -22,119 +12,143 @@ your media player.
   ██   ██ ███████ ███████ ███████  ██████
 ```
 
-## Dependencies (install these in a venv with pip, or get them off the aur)
+Fork en Rust de [tacoproz1/tacos-terminal-lyrics](https://github.com/tacoproz1/tacos-terminal-lyrics),
+simplificado a un único binario:
 
-**Required:**
-- `python >= 3.12`
-- `python-pyyaml`
-- `ffmpeg` (provides ffprobe)
-- `playerctl`
+- **Sin lrc-fetch / lrc-processor** — el visualizador busca la letra él solo
+  en [lrclib.net](https://lrclib.net) con la metadata del player (artista,
+  título, álbum y duración), con reintentos progresivos (título limpio →
+  título original → búsqueda por query). Lo que baja se cachea en
+  `~/.cache/tacos-lyrics/`.
+- **Solo MPRIS** — cualquier reproductor que exponga MPRIS sirve:
+  navegador (Firefox/Chrome al reproducir música), mpv, ytmgo, spotify,
+  vlc, etc. No hay que configurar nada: se elige automáticamente el
+  player activo (reproduciendo > pausado > con pista), y si cambias de
+  player o de canción se detecta solo. Los players rotos del bus se
+  saltan sin romper el escaneo.
+- **ytmgo sin MPRIS también funciona** — ytmgo reproduce con un mpv que
+  no expone MPRIS, así que hay un backend dedicado que lee la cola de
+  su base de datos (`~/.local/share/ytmgo/ytmgo.db`), la posición del
+  socket IPC de mpv (`/run/user/<uid>/ytmgo-mpv-*.sock`) y hasta
+  reutiliza su propio cache de letras sincronizadas antes de ir a
+  lrclib.
+- **Colores que siguen tu tema** — por defecto las letras usan slots de
+  la paleta de tu terminal, así heredan tu colorscheme (y sus cambios
+  en vivo) sin configurar nada. Si quieres colores exactos o que una
+  herramienta de theming (noctalia, matugen...) los genere, hay un
+  archivo de tema simple que se recarga con SIGUSR1 — sin pywal ni
+  dependencias: ver "Colores y temas" abajo.
+- **Karaoke palabra a palabra** — el corte de color avanza palabra por
+  palabra dentro de la línea (distribución uniforme, como el modo wlrc
+  del original, pero calculado al vuelo: no hay que preprocesar nada).
+  Pausa → la línea entera se atenúa; seek → salta a la línea correcta.
 
-**Optional but you should really really get it:**
-- `python-mutagen` — reads embedded audio tags for better lyrics matching
-- `python-syncedlyrics` — fallback lyrics source (NetEase, etc.)
-- `python-librosa` — onset detection for more accurate word-level timing
-
-## Install
-
-### AUR (havent made it yet, prolly wont though)
-```bash
-paru -S lrc-tools
-```
-
-### Manual (do this)
-```bash
-git clone https://github.com/tacoproz1/tacos-terminal-lyrics
-cd tacos-terminal-lyrics
-bash setup.sh
-pip install pyyaml mutagen syncedlyrics --break-system-packages
-```
-
-## Quickstart
-
-```bash
-mkdir -p ~/lyrics/raw ~/lyrics/processed
-
-# 1. Download lyrics for your music library (if using bash and not fish run export PATH="$HOME/.local/bin:$PATH")
-lrc-fetch --audio-dir ~/music --output-dir ~/lyrics/raw
-# 2. Process into word-level timing
-lrc-processor --lrc-dir ~/lyrics/raw --audio-dir ~/music \
-              --output-dir ~/lyrics/processed --wlrc
-
-# 3. Start the visualizer, play something in your media player
-lrc-vis --lrc-dir ~/lyrics/processed --wlrc
-```
-
-Steps 1 and 2 are one-time setup per library. `lrc-vis` is the daily driver.
-
-## How it works
-
-**`lrc-fetch`** scans your music directory, reads embedded tags (or parses
-filenames), and downloads synced LRC lyrics from [LRCLIB](https://lrclib.net)
-with syncedlyrics as a fallback.
-
-**`lrc-processor`** takes standard LRC files (phrase-level timing) and splits
-long phrases at natural boundaries — commas, conjunctions, duration — and
-optionally converts to word-level WLRC format using even distribution or
-librosa onset detection.
-
-**`lrc-vis`** hooks into your media player via playerctl (MPRIS), finds the
-matching LRC/WLRC file for the current track, and renders lyrics as large
-block letters centered in the terminal. Handles seeking, pausing, and track
-changes automatically.
-
-## LRC file matching
-
-Output filenames must match audio filenames. `Artist - Title.mp3` →
-`Artist - Title.lrc`. `lrc-fetch` handles this automatically. If you source
-LRC files elsewhere, name them to match.
-
-## Configuration
-
-Copy `config_example.yaml` to `~/.config/lrc-tools/config.yaml` and pass it
-with `--config`:
+## Uso
 
 ```bash
-lrc-vis --config ~/.config/lrc-tools/config.yaml --lrc-dir ~/lyrics/processed --wlrc
+tacos-lyrics            # todo automático
+tacos-lyrics --compact   # fuente de 3 filas en vez de 5
+tacos-lyrics --no-karaoke
+tacos-lyrics --no-header
+tacos-lyrics --refresh 100
 ```
 
-Key settings:
+Teclas: `q` o Ctrl-C para salir.
 
-```yaml
-processor:
-  max_phrase_duration: 2.5   # split phrases longer than this (seconds)
-  max_words_per_phrase: 8
-
-puller:
-  search_threads: 5
-  download_threads: 5
-  preserve_structure: true   # mirror audio dir layout in lyrics dir
-
-visualizer:
-  default_font: block        # block or compact
-  refresh_rate: 0.05
-```
-
-## Custom fonts
-
-Fonts are defined in JSON. See `custom_fonts.json` for the format.
+## Instalar
 
 ```bash
-lrc-vis --lrc-dir ~/lyrics/processed --wlrc \
-        --custom-fonts custom_fonts.json --font mini
+cargo install --git https://github.com/mikuri12/tacos-terminal-lyrics-rust
+# o compilar del source:
+git clone https://github.com/mikuri12/tacos-terminal-lyrics-rust
+cd tacos-terminal-lyrics-rust && cargo build --release
+```
+
+Requisitos en tiempo de ejecución: ninguno más que el binario y un
+player MPRIS (cualquier navegador moderno o reproductor de Linux ya lo
+exponen). Conexión a internet solo la primera vez que escuchas cada
+canción; luego sale del cache local.
+
+## Cómo funciona
+
+1. Escanea el bus de sesión buscando `org.mpris.MediaPlayer2.*` y elige
+   el player más relevante (reproduciendo > pausado > con pista).
+2. Con la metadata de la pista, consulta `lrclib.net/api/get`; si no
+   hay resultado prueba `/api/search` con el título limpio (sin
+   "(Official Video)", "feat...", etc.), luego con el original, y por
+   último búsqueda por query. Solo acepta letras *sincronizadas* — las
+   planas no sirven para un visualizador con timing.
+3. Parsea el LRC (soporta varias marcas de tiempo por línea y tags
+   `[ti:]`/`[ar:]`), lo cachea por "artista - título", y renderiza la
+   línea activa con la posición real del player consultada en cada
+   frame — por eso pausar y saltar funcionan sin lógica extra.
+4. Los colores salen de un archivo de tema simple (`~/.config/tacos-lyrics/
+   theme.txt`, o `--theme FILE`), con fallback a la paleta de la terminal;
+   ver abajo.
+
+## Colores y temas
+
+Sin configurar nada, las letras usan slots de la paleta de tu terminal
+(`38;5;N` / `39`), así siguen tu colorscheme vivo — cuando la terminal
+cambia de tema, las letras cambian con ella.
+
+Para fijar colores exactos hay un archivo de tema plano, `key = value`:
 
 ```
-## extra
+# ~/.config/tacos-lyrics/theme.txt
+sung   = #cba6f7      # palabras ya cantadas (karaoke)
+unsung = palette:8    # palabras pendientes
+paused = dim          # la línea entera en pausa
+header = default      # la línea "artista - título"
+```
 
-for clearing metadata in locally downloaded files which may initially interfere with the process or other uses, refer to: 
-https://gist.github.com/ISawSau/d3ea9ffd8b346be55c7bc68831637c47
+Valores: `#rrggbb`, `#rgb`, `palette:N` (slot 0-255 de tu terminal),
+`default` (primer plano normal), `dim` (atenúa el primer plano).
 
-for more dynamic OS/tool support check out:
-https://github.com/SlurryMixx/-tacos-terminal-lyrics-SPOTIFYPORT
+El visualizador recarga el archivo al recibir `SIGUSR1`
+(`kill -USR1 <pid>`), así las herramientas de theming pueden recolorear
+la sesión en marcha. Hay dos plantillas en `templates/`:
 
-vibecoded rust rewrite of my project(sorta), has higher standard wlrc/lrc repos(more accurate lyrics) go to:
-https://github.com/mgtaco/terminal-lyrics
-## License
+- **Noctalia v5** — copia `templates/noctalia-theme.txt` a
+  `~/.config/noctalia/templates/tacos-lyrics-theme.txt`,
+  `templates/tacos-lyrics-reload.sh` a
+  `~/.config/noctalia/templates/` (dale `chmod +x`), y añade a
+  `~/.config/noctalia/templates.toml`:
 
-MIT
-# tacos-terminal-lyrics
+  ```toml
+  [theme.templates.user.tacos-lyrics]
+  input_path  = "~/.config/noctalia/templates/tacos-lyrics-theme.txt"
+  output_path = "~/.config/tacos-lyrics/theme.txt"
+  post_hook   = "bash ~/.config/noctalia/templates/tacos-lyrics-reload.sh"
+  ```
+
+  Con esto, cada vez que cambies el colorscheme o el wallpaper en
+  Noctalia, el visualizador corriendo se recolorea solo. La plantilla
+  usa el color **primario** del scheme para las palabras cantadas y
+  `dim` para el resto, así nunca se funde con el fondo de la terminal
+  (los tonos derivados de `surface`/`on_surface` pueden ser casi
+  idénticos al fondo). Verificado en vivo: Evie → Catppuccin con el
+  visualizador en marcha.
+
+- **matugen** (u otras herramientas) — cualquier plantilla que genere
+  ese mismo formato de 4 líneas sirve; con matugen sería un template
+  `.txt` con `{{colors.primary.default.hex}}` etc. y un post_hook que
+  haga `pkill -USR1 tacos-lyrics`.
+
+## Diferencias con el original
+
+| Original (Python) | Este fork (Rust) |
+|---|---|
+| 3 herramientas (`lrc-fetch`, `lrc-processor`, `lrc-vis`) | 1 solo binario (`tacos-lyrics`) |
+| Pre-proceso de la biblioteca en 2 pasos | Cero pasos: busca y renderiza on-the-fly |
+| Formato wlrc intermedio | LRC estándar + karaoke calculado al vuelo |
+| `playerctl` + python-pyyaml/mutagen/... | Sin dependencias de runtime |
+| Config YAML + fuentes custom JSON | Flags de línea de comandos, 2 fuentes incluidas |
+| Colores no implementados | Paleta de la terminal por defecto + archivo de tema + SIGUSR1 |
+
+La fuente de letras grandes (5 filas) y la compacta (3 filas) son las
+mismas del proyecto original.
+
+## Licencia
+
+MIT, como el proyecto original.
