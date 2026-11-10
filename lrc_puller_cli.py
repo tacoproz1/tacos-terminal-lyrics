@@ -19,6 +19,17 @@ def _progress_bar(processed: int, total: int, found: int, errors: int):
     )
 
 
+def _thread_count(value):
+    """Validate a --search-threads/--download-threads value (allowed: 1-40)."""
+    try:
+        count = int(value)
+    except (TypeError, ValueError):
+        raise argparse.ArgumentTypeError(f"invalid thread count: {value!r} (expected an integer between 1 and 40)")
+    if not 1 <= count <= 40:
+        raise argparse.ArgumentTypeError(f"invalid thread count: {value!r} (expected an integer between 1 and 40)")
+    return count
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Batch download LRC lyrics from LRCLIB (with syncedlyrics fallback)"
@@ -27,10 +38,10 @@ def main():
                         help='Directory containing audio files')
     parser.add_argument('--output-dir', type=Path, required=True,
                         help='Directory to save .lrc files')
-    parser.add_argument('--search-threads', type=int, default=None,
-                        help='Concurrent search threads (default: 5)')
-    parser.add_argument('--download-threads', type=int, default=None,
-                        help='Concurrent download threads (default: 5)')
+    parser.add_argument('--search-threads', type=_thread_count, default=None,
+                        help='Concurrent search threads, 1-40 (default: 5)')
+    parser.add_argument('--download-threads', type=_thread_count, default=None,
+                        help='Concurrent download threads, 1-40 (default: 5)')
     parser.add_argument('--overwrite', action='store_true',
                         help='Overwrite existing .lrc files')
     parser.add_argument('--no-preserve-structure', action='store_true',
